@@ -9,24 +9,34 @@ struct Pokemon: Identifiable {
 }
 
 struct PokemonListResponse: Decodable {
-    let results: [PokemonResult]
+    let results: [PokemonListEntry]
 }
 
-struct PokemonResult: Decodable {
+struct PokemonListEntry: Decodable {
     let name: String
     let url: String
-    var id: Int {
-        return Int(url.split(separator: "/").last ?? "0") ?? 0
-    }
-    var imageURL: String {
-        return "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/\(id).png"
-    }
-    var types: [String] {
-        // Implémentation à adapter avec les détails de l'API pour récupérer les types.
-        return ["Normal"]
-    }
-    var stats: [String: Int] {
-        // Implémentation à adapter avec les détails de l'API pour récupérer les stats.
-        return ["HP": 50, "Attack": 60, "Defense": 55, "Speed": 40]
-    }
+}
+
+struct PokemonDetailResponse: Decodable {
+    let id: Int
+    let name: String
+    let types: [PokemonTypeEntry]
+    let stats: [PokemonStatEntry]
+}
+
+struct PokemonTypeEntry: Decodable {
+    let type: PokemonType
+}
+
+struct PokemonType: Decodable {
+    let name: String
+}
+
+struct PokemonStatEntry: Decodable {
+    let base_stat: Int
+    let stat: PokemonStat
+}
+
+struct PokemonStat: Decodable {
+    let name: String
 }

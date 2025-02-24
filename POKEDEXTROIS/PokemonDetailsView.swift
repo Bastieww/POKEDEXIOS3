@@ -1,4 +1,5 @@
 import SwiftUI
+import CoreData
 
 struct PokemonDetailView: View {
     var pokemon: Pokemon
@@ -15,14 +16,14 @@ struct PokemonDetailView: View {
             Text(pokemon.name.capitalized)
                 .font(.largeTitle)
                 .padding()
-            
+
             Text("Types: \(pokemon.types.joined(separator: ", "))")
                 .padding()
 
             ForEach(pokemon.stats.keys.sorted(), id: \.self) { stat in
                 Text("\(stat.capitalized): \(pokemon.stats[stat] ?? 0)")
             }
-            
+
             Button(action: {
                 isFavorite.toggle()
                 saveFavorite()
@@ -35,10 +36,43 @@ struct PokemonDetailView: View {
             }
         }
         .padding()
+        .onAppear {
+            checkIfFavorite()
+        }
+    }
+
+    private func checkIfFavorite() {
+        let fetchRequest: NSFetchRequest<PokemonEntity> = PokemonEntity.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "name == %@", pokemon.name)
+
+        do {
+            if let result = try viewContext.fetch(fetchRequest).first {
+                isFavorite = result.isFavorite
+            }
+        } catch {
+            print("Failed to fetch favorite status: \(error)")
+        }
     }
 
     private func saveFavorite() {
-        // Implémentez ici la logique Core Data pour ajouter aux favoris
+        let fetchRequest: NSFetchRequest<PokemonEntity> = PokemonEntity.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "name == %@", pokemon.name)
+
+        do {
+            let results = try viewContext.fetch(fetchRequest)
+            if let pokemonEntity = results.first {
+                pokemonEntity.isFavorite = isFavorite
+            } else {
+                let newPokemonEntity = PokemonEntity(context: viewContext)
+                newPokemonEntity.name = pokemon.name
+                newPokemonEntity.imageURL = pokemon.imageURL
+                newPokemonEntity.types = pokemon.types as NSObject
+                newPokemonEntity.stats = pokemon.stats as NSObject
+                newPokemonEntity.isFavorite = isFavorite
+            }
+            try viewContext.save()
+        } catch {
+            print("Failed to save favorite status: \(error)")
+        }
     }
 }
-
