@@ -1,15 +1,17 @@
-import SwiftUI
 import CoreData
+import SwiftUI
 
 struct PokemonDetailView: View {
     var pokemon: Pokemon
+    var allPokemons: [Pokemon] // Liste complète des Pokémon
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.presentationMode) private var presentationMode
     @State private var isFavorite: Bool = false
+    @State private var enemyPokemon: Pokemon?
+    @State private var showBattleView: Bool = false // Variable pour afficher BattleView
 
     var body: some View {
         VStack {
-            // Bouton de fermeture
             HStack {
                 Button(action: {
                     presentationMode.wrappedValue.dismiss()
@@ -22,7 +24,6 @@ struct PokemonDetailView: View {
                 Spacer()
             }
 
-            // Image du Pokémon
             AsyncImage(url: URL(string: pokemon.imageURL)) { image in
                 image.resizable()
                     .scaledToFit()
@@ -31,7 +32,6 @@ struct PokemonDetailView: View {
                 ProgressView()
             }
 
-            // Nom du Pokémon
             Text(pokemon.name.capitalized)
                 .font(.largeTitle)
                 .padding()
@@ -43,13 +43,12 @@ struct PokemonDetailView: View {
                         .padding(8)
                         .background(typeColor(type))
                         .cornerRadius(8)
-                        .foregroundColor(type == "normal" ? .black : .white) // Ensure visibility
+                        .foregroundColor(.white)
                         .font(.headline)
                 }
             }
             .padding()
 
-            // Statistiques
             VStack(spacing: 8) {
                 ForEach(pokemon.stats.keys.sorted(), id: \.self) { stat in
                     HStack {
@@ -80,7 +79,6 @@ struct PokemonDetailView: View {
             }
             .padding()
 
-            // Bouton Favori
             Button(action: {
                 withAnimation {
                     isFavorite.toggle()
@@ -100,6 +98,19 @@ struct PokemonDetailView: View {
             }
 
             Spacer()
+
+            Button("Start Random Battle") {
+                startRandomBattle()
+            }
+            .padding()
+            .background(Color.blue)
+            .foregroundColor(.white)
+            .cornerRadius(10)
+            .sheet(isPresented: Binding(get: { showBattleView }, set: { showBattleView = $0 })) {
+                if let enemy = enemyPokemon {
+                    BattleView(playerPokemon: pokemon, enemyPokemon: enemy)
+                }
+            }
         }
         .padding()
         .onAppear {
@@ -107,7 +118,6 @@ struct PokemonDetailView: View {
         }
     }
 
-    // Vérifie si le Pokémon est déjà en favori
     private func checkIfFavorite() {
         let fetchRequest: NSFetchRequest<PokemonEntity> = PokemonEntity.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "name == %@", pokemon.name)
@@ -121,7 +131,6 @@ struct PokemonDetailView: View {
         }
     }
 
-    // Sauvegarde l'état de favori
     private func saveFavorite() {
         let fetchRequest: NSFetchRequest<PokemonEntity> = PokemonEntity.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "name == %@", pokemon.name)
@@ -144,7 +153,6 @@ struct PokemonDetailView: View {
         }
     }
 
-    // Couleurs pour les types de Pokémon
     private func typeColor(_ type: String) -> Color {
         switch type.lowercased() {
         case "fire": return .red
@@ -168,8 +176,6 @@ struct PokemonDetailView: View {
         }
     }
 
-
-    // Couleur pour les statistiques en fonction de leur valeur
     private func colorForStat(_ value: CGFloat) -> Color {
         let progress = value / 150
         return Color(
@@ -178,18 +184,14 @@ struct PokemonDetailView: View {
             blue: 0.0
         )
     }
-}
 
-// Extension pour utiliser des couleurs hexadécimales
-extension Color {
-    init(hex: String) {
-        let scanner = Scanner(string: hex)
-        scanner.currentIndex = hex.startIndex
-        var rgbValue: UInt64 = 0
-        scanner.scanHexInt64(&rgbValue)
-        let red = Double((rgbValue >> 16) & 0xff) / 255.0
-        let green = Double((rgbValue >> 8) & 0xff) / 255.0
-        let blue = Double(rgbValue & 0xff) / 255.0
-        self.init(red: red, green: green, blue: blue)
+    private func startRandomBattle() {
+        let randomPokemons = allPokemons.shuffled().prefix(1).map { $0 }
+        print(randomPokemons[0])
+        enemyPokemon = randomPokemons[0]
+        print(enemyPokemon)
+        showBattleView = true
+        
+        print("Battle started with \(pokemon.name) vs \(enemyPokemon?.name ?? "")")
     }
 }

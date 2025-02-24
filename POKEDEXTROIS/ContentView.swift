@@ -1,4 +1,5 @@
 import SwiftUI
+import UserNotifications
 
 struct ContentView: View {
     @State private var pokemons: [Pokemon] = []
@@ -19,15 +20,12 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack {
-                // Search bar
                 TextField("Search Pokémon...", text: $searchText)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding()
                     .onChange(of: searchText) { _ in filterPokemons() }
 
-                // Filter and sort controls
                 HStack {
-                    // Type filter
                     Picker("Type", selection: $selectedType) {
                         ForEach(types, id: \.self) { type in
                             Text(type).tag(type)
@@ -38,7 +36,6 @@ struct ContentView: View {
 
                     Spacer()
 
-                    // Sort options
                     Picker("Sort", selection: $sortOption) {
                         ForEach(SortOption.allCases, id: \.self) { option in
                             Text(option.rawValue).tag(option)
@@ -49,7 +46,6 @@ struct ContentView: View {
                 }
                 .padding()
 
-                // Pokémon list
                 List(filteredPokemons) { pokemon in
                     HStack {
                         AsyncImage(url: URL(string: pokemon.imageURL)) { image in
@@ -75,9 +71,9 @@ struct ContentView: View {
                         }
                     }
                 }
-                .sheet(isPresented: $showDetail) {
+                .sheet(isPresented: Binding(get: { showDetail }, set: { showDetail = $0 })) {
                     if let pokemon = selectedPokemon {
-                        PokemonDetailView(pokemon: pokemon)
+                        PokemonDetailView(pokemon: pokemon, allPokemons: pokemons)
                     }
                 }
             }
@@ -87,17 +83,14 @@ struct ContentView: View {
     private func filterPokemons() {
         var result = pokemons
 
-        // Filter by name
         if !searchText.isEmpty {
             result = result.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
         }
 
-        // Filter by type
         if selectedType != "All" {
             result = result.filter { $0.types.contains(selectedType.lowercased()) }
         }
 
-        // Sort results
         switch sortOption {
         case .alphabetical:
             result.sort { $0.name < $1.name }
@@ -107,10 +100,14 @@ struct ContentView: View {
 
         filteredPokemons = result
     }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
+    
+    func requestNotificationPermission() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if granted {
+                print("Permission granted")
+            } else {
+                print("Permission denied")
+            }
+        }
     }
 }

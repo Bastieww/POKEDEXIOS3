@@ -16,6 +16,7 @@
 		F36A06202D63861700D251B4 /* Pokemon.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36A061F2D63861700D251B4 /* Pokemon.swift */; };
 		F36A06222D63866200D251B4 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36A06212D63866200D251B4 /* APIService.swift */; };
 		F36A06242D63868800D251B4 /* PokemonDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36A06232D63868800D251B4 /* PokemonDetailsView.swift */; };
+		F3BA0A162D6C708400E938EF /* BattleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3BA0A152D6C708400E938EF /* BattleView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,7 @@
 		F36A061F2D63861700D251B4 /* Pokemon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pokemon.swift; sourceTree = "<group>"; };
 		F36A06212D63866200D251B4 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
 		F36A06232D63868800D251B4 /* PokemonDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonDetailsView.swift; sourceTree = "<group>"; };
+		F3BA0A152D6C708400E938EF /* BattleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BattleView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +72,7 @@
 				F36A061F2D63861700D251B4 /* Pokemon.swift */,
 				F36A06212D63866200D251B4 /* APIService.swift */,
 				F36A06232D63868800D251B4 /* PokemonDetailsView.swift */,
+				F3BA0A152D6C708400E938EF /* BattleView.swift */,
 			);
 			path = POKEDEXTROIS;
 			sourceTree = "<group>";
@@ -154,6 +157,7 @@
 			files = (
 				F36A06202D63861700D251B4 /* Pokemon.swift in Sources */,
 				F36A06162D6385C000D251B4 /* Persistence.swift in Sources */,
+				F3BA0A162D6C708400E938EF /* BattleView.swift in Sources */,
 				F36A06242D63868800D251B4 /* PokemonDetailsView.swift in Sources */,
 				F36A060F2D6385BE00D251B4 /* ContentView.swift in Sources */,
 				F36A06192D6385C000D251B4 /* POKEDEXTROIS.xcdatamodeld in Sources */,
