@@ -43,7 +43,7 @@ struct PokemonDetailView: View {
                         .padding(8)
                         .background(typeColor(type))
                         .cornerRadius(8)
-                        .foregroundColor(.white)
+                        .foregroundColor(type == "normal" ? .black : .white)
                         .font(.headline)
                 }
             }
@@ -187,11 +187,7 @@ struct PokemonDetailView: View {
 
     private func startRandomBattle() {
         let randomPokemons = allPokemons.shuffled().prefix(1).map { $0 }
-        print(randomPokemons[0])
         enemyPokemon = randomPokemons[0]
-        print(enemyPokemon)
         showBattleView = true
-        
-        print("Battle started with \(pokemon.name) vs \(enemyPokemon?.name ?? "")")
     }
 }

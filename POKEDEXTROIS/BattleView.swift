@@ -8,6 +8,13 @@ struct BattleView: View {
     @State private var isPlayerTurn: Bool
     @State private var battleMessage: String = "The battle begins!"
     @State private var isBattleInProgress = false
+    @State private var attackAnimation: Bool = false
+    @State private var playerOffset: CGFloat = 0
+    @State private var enemyOffset: CGFloat = 0
+    @State private var playerDamageText: String? = nil
+    @State private var enemyDamageText: String? = nil
+    @State private var playerDamageOpacity: Double = 1.0
+    @State private var enemyDamageOpacity: Double = 1.0
 
     init(playerPokemon: Pokemon, enemyPokemon: Pokemon) {
         self._playerPokemon = State(initialValue: playerPokemon)
@@ -24,19 +31,34 @@ struct BattleView: View {
                 .padding()
 
             HStack {
-                AsyncImage(url: URL(string: playerPokemon.imageURL)) { phase in
-                    switch phase {
-                    case .empty:
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle())
-                            .frame(width: 80, height: 80)
-                    case .success(let image):
-                        image.resizable().scaledToFit().frame(width: 80, height: 80)
-                    case .failure:
-                        Image(systemName: "xmark.circle.fill")
-                            .frame(width: 80, height: 80)
-                    @unknown default:
-                        EmptyView()
+                // Player Pokémon Image with animation
+                ZStack {
+                    AsyncImage(url: URL(string: playerPokemon.imageURL)) { phase in
+                        switch phase {
+                        case .empty:
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle())
+                                .frame(width: 80, height: 80)
+                        case .success(let image):
+                            image.resizable().scaledToFit()
+                                .frame(width: 80, height: 80)
+                                .offset(x: playerOffset)
+                                .animation(.easeInOut(duration: 0.5), value: playerOffset)
+                        case .failure:
+                            Image(systemName: "xmark.circle.fill")
+                                .frame(width: 80, height: 80)
+                        @unknown default:
+                            EmptyView()
+                        }
+                    }
+                    if let damageText = playerDamageText {
+                        Text(damageText)
+                            .foregroundColor(.red)
+                            .font(.title)
+                            .bold()
+                            .offset(y: -40)
+                            .opacity(playerDamageOpacity)
+                            .animation(.easeOut(duration: 1.0), value: playerDamageOpacity)
                     }
                 }
 
@@ -49,19 +71,34 @@ struct BattleView: View {
             }
 
             HStack {
-                AsyncImage(url: URL(string: enemyPokemon.imageURL)) { phase in
-                    switch phase {
-                    case .empty:
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle())
-                            .frame(width: 80, height: 80)
-                    case .success(let image):
-                        image.resizable().scaledToFit().frame(width: 80, height: 80)
-                    case .failure:
-                        Image(systemName: "xmark.circle.fill")
-                            .frame(width: 80, height: 80)
-                    @unknown default:
-                        EmptyView()
+                // Enemy Pokémon Image with animation
+                ZStack {
+                    AsyncImage(url: URL(string: enemyPokemon.imageURL)) { phase in
+                        switch phase {
+                        case .empty:
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle())
+                                .frame(width: 80, height: 80)
+                        case .success(let image):
+                            image.resizable().scaledToFit()
+                                .frame(width: 80, height: 80)
+                                .offset(x: enemyOffset)
+                                .animation(.easeInOut(duration: 0.5), value: enemyOffset)
+                        case .failure:
+                            Image(systemName: "xmark.circle.fill")
+                                .frame(width: 80, height: 80)
+                        @unknown default:
+                            EmptyView()
+                        }
+                    }
+                    if let damageText = enemyDamageText {
+                        Text(damageText)
+                            .foregroundColor(.red)
+                            .font(.title)
+                            .bold()
+                            .offset(y: -40)
+                            .opacity(enemyDamageOpacity)
+                            .animation(.easeOut(duration: 1.0), value: enemyDamageOpacity)
                     }
                 }
 
@@ -79,8 +116,8 @@ struct BattleView: View {
                     .frame(height: 20)
                 RoundedRectangle(cornerRadius: 10)
                     .fill(Color.green)
-                    .frame(width: CGFloat(playerHP), height: 20)
-                    .animation(.easeInOut(duration: 0.5))
+                    .frame(width: CGFloat(playerHP / Double(playerPokemon.stats["hp"] ?? 100)) * 200, height: 20)
+                    .animation(.easeInOut(duration: 0.5), value: playerHP)
             }
             .padding()
 
@@ -90,8 +127,8 @@ struct BattleView: View {
                     .frame(height: 20)
                 RoundedRectangle(cornerRadius: 10)
                     .fill(Color.red)
-                    .frame(width: CGFloat(enemyHP), height: 20)
-                    .animation(.easeInOut(duration: 0.5))
+                    .frame(width: CGFloat(enemyHP / Double(enemyPokemon.stats["hp"] ?? 100)) * 200, height: 20)
+                    .animation(.easeInOut(duration: 0.5), value: enemyHP)
             }
             .padding()
         }
@@ -115,16 +152,34 @@ struct BattleView: View {
 
             if isPlayerTurn {
                 battleMessage = "\(playerPokemon.name.capitalized) attacks!"
+                playerOffset = 20  // Move player towards the enemy
                 let attackPower = bestAttack(for: playerPokemon)
-                let defensePower = bestDefense(for: enemyPokemon)
-                let damage = attackPower - defensePower
+                let defensePower = bestDefense(for: enemyPokemon, isSpecialAttack: attackPower == bestAttack(for: playerPokemon, isSpecial: true))
+                let damage = max(1, attackPower - defensePower) // Ensure at least 1 damage
                 enemyHP = max(0, enemyHP - Double(damage))
+                enemyDamageText = "-\(damage)"
+                enemyDamageOpacity = 1.0
+                withAnimation {
+                    enemyDamageOpacity = 0.0
+                }
             } else {
                 battleMessage = "\(enemyPokemon.name.capitalized) attacks!"
+                enemyOffset = -20  // Move enemy towards the player
                 let attackPower = bestAttack(for: enemyPokemon)
-                let defensePower = bestDefense(for: playerPokemon)
-                let damage = attackPower - defensePower
+                let defensePower = bestDefense(for: playerPokemon, isSpecialAttack: attackPower == bestAttack(for: enemyPokemon, isSpecial: true))
+                let damage = max(1, attackPower - defensePower) // Ensure at least 1 damage
                 playerHP = max(0, playerHP - Double(damage))
+                playerDamageText = "-\(damage)"
+                playerDamageOpacity = 1.0
+                withAnimation {
+                    playerDamageOpacity = 0.0
+                }
+            }
+
+            // Reset the offsets to return Pokémon to starting positions
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                playerOffset = 0
+                enemyOffset = 0
             }
 
             isPlayerTurn.toggle()
@@ -134,6 +189,22 @@ struct BattleView: View {
         }
     }
 
+    private func bestAttack(for pokemon: Pokemon, isSpecial: Bool = false) -> Int {
+        if isSpecial {
+            let specialAttack = pokemon.stats["special-attack"] ?? 0
+            return specialAttack
+        } else {
+            let attack = pokemon.stats["attack"] ?? 0
+            return attack
+        }
+    }
+
+    private func bestDefense(for pokemon: Pokemon, isSpecialAttack: Bool) -> Int {
+        let defenseKey = isSpecialAttack ? "special-defense" : "defense"
+        let defense = pokemon.stats[defenseKey] ?? 0
+        return defense
+    }
+
     private func endBattle() {
         if playerHP == 0 {
             battleMessage = "\(enemyPokemon.name.capitalized) wins!"
@@ -141,18 +212,5 @@ struct BattleView: View {
             battleMessage = "\(playerPokemon.name.capitalized) wins!"
         }
         isBattleInProgress = false
-    }
-
-    private func bestAttack(for pokemon: Pokemon) -> Int {
-        let highestStat = pokemon.stats.filter { $0.key == "attack" || $0.key == "special-attack" }
-        let bestAttack = highestStat.max(by: { $0.value < $1.value })
-        return bestAttack?.value ?? 0
-    }
-
-
-    private func bestDefense(for pokemon: Pokemon) -> Int {
-        let highestDefense = pokemon.stats.filter { $0.key.contains("defense") }
-        let bestDefense = highestDefense.max(by: { $0.value < $1.value })
-        return bestDefense?.value ?? 0
     }
 }

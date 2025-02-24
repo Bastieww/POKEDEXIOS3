@@ -17,6 +17,7 @@
 		F36A06222D63866200D251B4 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36A06212D63866200D251B4 /* APIService.swift */; };
 		F36A06242D63868800D251B4 /* PokemonDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36A06232D63868800D251B4 /* PokemonDetailsView.swift */; };
 		F3BA0A162D6C708400E938EF /* BattleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3BA0A152D6C708400E938EF /* BattleView.swift */; };
+		F3F402882D6CC3560083165A /* QuizView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F402872D6CC3560083165A /* QuizView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 		F36A06212D63866200D251B4 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
 		F36A06232D63868800D251B4 /* PokemonDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonDetailsView.swift; sourceTree = "<group>"; };
 		F3BA0A152D6C708400E938EF /* BattleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BattleView.swift; sourceTree = "<group>"; };
+		F3F402872D6CC3560083165A /* QuizView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +75,7 @@
 				F36A06212D63866200D251B4 /* APIService.swift */,
 				F36A06232D63868800D251B4 /* PokemonDetailsView.swift */,
 				F3BA0A152D6C708400E938EF /* BattleView.swift */,
+				F3F402872D6CC3560083165A /* QuizView.swift */,
 			);
 			path = POKEDEXTROIS;
 			sourceTree = "<group>";
@@ -120,7 +123,7 @@
 					};
 				};
 			};
-			buildConfigurationList = F36A06042D6385BE00D251B4 /* Build configuration list for PBXProject "POKEDEXTROIS" */;
+			buildConfigurationList = F36A06042D6385BE00D251B4 /* Build configuration list for PBXProject "Pocket pokédex wish" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -157,6 +160,7 @@
 			files = (
 				F36A06202D63861700D251B4 /* Pokemon.swift in Sources */,
 				F36A06162D6385C000D251B4 /* Persistence.swift in Sources */,
+				F3F402882D6CC3560083165A /* QuizView.swift in Sources */,
 				F3BA0A162D6C708400E938EF /* BattleView.swift in Sources */,
 				F36A06242D63868800D251B4 /* PokemonDetailsView.swift in Sources */,
 				F36A060F2D6385BE00D251B4 /* ContentView.swift in Sources */,
@@ -347,7 +351,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		F36A06042D6385BE00D251B4 /* Build configuration list for PBXProject "POKEDEXTROIS" */ = {
+		F36A06042D6385BE00D251B4 /* Build configuration list for PBXProject "Pocket pokédex wish" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F36A061A2D6385C000D251B4 /* Debug */,

@@ -2,7 +2,7 @@ import Foundation
 
 struct APIService {
     static func fetchPokemons() async throws -> [Pokemon] {
-        let listURL = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=20")!
+        let listURL = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=100")!
         let (data, _) = try await URLSession.shared.data(from: listURL)
         let decodedListResponse = try JSONDecoder().decode(PokemonListResponse.self, from: data)
 
