@@ -1,3 +1,7 @@
+# Attention
+A cause d'une tentative de changement de nom, une erreur se produit à l'ouverture du projet.
+Pour pallier ce problème, il faut ouvrir "Poket pokedex wish.xcodeproj"
+
 # POKEDEXIOS3
 Pocket pokédex wish, un pokédex permettant de connaître tous vos pokémons préférés !
 Vous pouvez les faire s'affronter entre eux et jouer à un scramble avec leur noms
